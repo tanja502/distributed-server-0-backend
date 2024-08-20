@@ -20,12 +20,17 @@ function createServer(port, otherServers) {
     app.use(express.json());
 
     async function syncCounter() {
+        let responses = [];
         for (const server of otherServers) {
             try {
-                await axios.post(`${server}/sync`, { counter });
+                const response = await axios.post(`${server}/sync`, { counter });
+                responses.push(response.data.counter);
             } catch (error) {
-                console.log(`Error propagating increment to ${server}:`, error.message);
+                console.log(`Error communicating with ${server}:`, error.message);
             }
+        }
+        if (responses.length > 0) {
+            counter = Math.max(...responses);
         }
     }
 
@@ -46,7 +51,7 @@ function createServer(port, otherServers) {
             counter = newCounter;
             console.log(`Counter synchronized to ${counter}`);
         }
-        res.sendStatus(200);
+        res.json({ counter });
     });
 
     app.listen(port, () => {
