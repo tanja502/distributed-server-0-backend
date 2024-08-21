@@ -54,8 +54,9 @@ function createServer(port, otherServers) {
         res.json({ counter });
     });
 
-    app.listen(port, () => {
+    app.listen(port, async () => {
         console.log(`Server running on port ${port}`);
+        await syncCounter();
     });
 }
 
