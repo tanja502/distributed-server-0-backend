@@ -31,6 +31,7 @@ function createServer(port, otherServers) {
         }
         if (responses.length > 0) {
             counter = Math.max(...responses);
+            console.log(`Counter synchronized to ${counter}`);
         }
     }
 
