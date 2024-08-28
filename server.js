@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 
 function createServer(port, otherServers) {
+
     const app = express();
 
     let counter = 0;
@@ -61,4 +62,4 @@ function createServer(port, otherServers) {
     });
 }
 
-module.exports = createServer;
+createServer(3000,process.env.OTHER_SERVERS?.split(',') || []);
