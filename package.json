@@ -4,7 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "npm-run-all --parallel start:server_1 start:server_2 start:server_3"
+    "start": "npm-run-all --parallel start:server_1 start:server_2 start:server_3",
+    "setup:git-hooks": "git config core.hooksPath .git-hooks",
+    "postinstall": "npm run setup:git-hooks"
   },
   "keywords": [],
   "author": "",
