@@ -37,3 +37,5 @@ if [ "$branch" == "master" ]; then
   git push origin $new_version
   echo "Repository tagged with version $new_version"
 fi
+
+
