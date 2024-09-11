@@ -2,7 +2,7 @@
 
 TICKET_REGEX='^[A-Z]{3}-[0-9]{4}:'
 
-CONVENTIONAL_COMMIT_REGEX='(feat|fix|chore|docs|style|refactor|perf|test)(\(.*\))?: .{1,50}'
+CONVENTIONAL_COMMIT_REGEX='(feat|fix|chore|docs|style|refactor|perf|test|BREAKING CHANGE)(\(.*\))?: .{1,50}'
 
 COMMIT_MSG_FILE="$1"
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
@@ -17,9 +17,10 @@ fi
 if ! echo "$COMMIT_MSG" | grep -Eq "$CONVENTIONAL_COMMIT_REGEX"; then
     echo "Error: Commit message does not follow Conventional Commits format." >&2
     echo "Expected format: <type>(<optional scope>): <description>" >&2
-    echo "Where <type> is one of 'feat', 'fix', 'chore', 'docs', 'style', 'refactor', 'perf', 'test'." >&2
+    echo "Where <type> is one of 'feat', 'fix', 'chore', 'docs', 'style', 'refactor', 'perf', 'test', or 'BREAKING CHANGE'." >&2
     echo "The description should be 1-50 characters long." >&2
     echo "Example: 'JIR-1234: fix(docu): correct typo in documentation'" >&2
+    echo "Or: 'JIR-5678: BREAKING CHANGE: update API response structure'" >&2
     exit 1
 fi
 
