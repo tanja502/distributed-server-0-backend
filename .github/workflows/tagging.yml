@@ -1,0 +1,49 @@
+name: Tagging Workflow
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  tag-on-merge:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config user.name "Tanja Meier"
+          git config user.email "tanja.meier2@bbzsogr.ch"
+
+      - name: Get latest version tag
+        id: vars
+        run: |
+          latest_version=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.1.0")
+          echo "latest_version=$latest_version" >> $GITHUB_ENV
+
+      - name: Determine new version
+        run: |
+          COMMIT_MSG="${{ github.event.pull_request.title }}"
+          latest_version=$GITHUB_ENV
+          
+          if echo "$COMMIT_MSG" | grep -q "BREAKING CHANGE"; then
+            new_version=$(echo $latest_version | awk -F. '{print $1+1".0.0"}')
+          elif echo "$COMMIT_MSG" | grep -Eq '^[A-Z]{3}-[0-9]{4}: feat'; then
+            new_version=$(echo $latest_version | awk -F. '{print $1"."$2+1".0"}')
+          elif echo "$COMMIT_MSG" | grep -Eq '^[A-Z]{3}-[0-9]{4}: (fix|chore|docs|style|refactor|perf|test)'; then
+            new_version=$(echo $latest_version | awk -F. '{print $1"."$2"."$3+1}')
+          else
+            echo "No version bump required."
+            exit 0
+          fi
+
+          echo "New version: $new_version"
+          echo "new_version=$new_version" >> $GITHUB_ENV
+
+      - name: Create new tag
+        run: |
+          new_version=$GITHUB_ENV
+          git tag $new_version
+          git push origin $new_version
