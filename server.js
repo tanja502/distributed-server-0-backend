@@ -36,12 +36,12 @@ function createServer(port, otherServers) {
         }
     }
 
-    // app.post('/increment', async (req, res) => {
-    //     counter++;
-    //     await syncCounter();
-    //
-    //     res.send(`Counter incremented to ${counter}`);
-    // });
+    app.post('/increment', async (req, res) => {
+        counter++;
+        await syncCounter();
+
+        res.send(`Counter incremented to ${counter}`);
+    });
 
     app.get('/counter', (req, res) => {
         res.json({ counter });
