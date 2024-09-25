@@ -56,10 +56,13 @@ function createServer(port, otherServers) {
         res.json({ counter });
     });
 
-    app.listen(port, async () => {
+    const server = app.listen(port, async () => {
         console.log(`Server running on port ${port}`);
         await syncCounter();
     });
+    return { app, server };
 }
+
+module.exports = { createServer };
 
 createServer(3000,process.env.OTHER_SERVERS?.split(',') || []);
