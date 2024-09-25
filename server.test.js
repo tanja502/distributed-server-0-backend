@@ -4,11 +4,12 @@ import {createServer} from "./server";
 
 describe('Counter Server', () => {
     let server;
-    const port = 3000;
+    const port = 3001;
     const baseURL = `http://localhost:${port}`;
 
     beforeAll(() => {
-        server = createServer(port, []);
+        const instance = createServer(port, []);
+        server = instance.server;
     });
 
     afterAll(() => {
