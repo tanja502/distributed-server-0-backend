@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Git
         run: |
@@ -24,9 +26,10 @@ jobs:
           echo "latest_version=$latest_version" >> $GITHUB_ENV
 
       - name: Determine new version
+        id: versioning
         run: |
           COMMIT_MSG="${{ github.event.pull_request.title }}"
-          latest_version=$GITHUB_ENV
+          latest_version=${{ env.latest_version }}
           
           if echo "$COMMIT_MSG" | grep -q "BREAKING CHANGE"; then
             new_version=$(echo $latest_version | awk -F. '{print $1+1".0.0"}')
@@ -43,7 +46,10 @@ jobs:
           echo "new_version=$new_version" >> $GITHUB_ENV
 
       - name: Create new tag
+        if: success()
         run: |
-          new_version=$GITHUB_ENV
+          new_version=${{ env.new_version }}
           git tag $new_version
           git push origin $new_version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
